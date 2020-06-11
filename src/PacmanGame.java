@@ -41,14 +41,14 @@ public class PacmanGame {
     }
 
     public void generateItemToEat(){
-        grid[20][1] = 4;
+        grid[20][1] = 4;//big items to eat
         grid[20][19] = 4;
         grid[10][1] = 4;
         grid[10][19] = 4;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if(grid[i][j] == 0)
-                    grid[i][j] = 3;
+                    grid[i][j] = 3;//little items to eat
             }
         }
     }
@@ -58,7 +58,7 @@ public class PacmanGame {
             int x = ThreadLocalRandom.current().nextInt(grid.length);
             int y = ThreadLocalRandom.current().nextInt(grid[x].length);
             if(!this.pacman.equals(new Coordinate(x, y)) && grid[x][y] != 2) {
-                grid[x][y] = 1;
+                grid[x][y] = 1;//cherry
                 partialPoint = 0;
             }
             else
@@ -111,37 +111,37 @@ public class PacmanGame {
         eatItemsOrCherry(this.pacman);
         generateCherry();
         if (m == Move.RIGHT && grid[pacman.getX()][pacman.getY() + 1] != 2) {
-            this.pacman = new Coordinate(pacman.getX(), pacman.getY() + 1);
+            this.pacman.setY(pacman.getY() + 1);
         } else if (m == Move.LEFT && grid[pacman.getX()][pacman.getY() - 1] != 2) {
-            this.pacman = new Coordinate(pacman.getX(), pacman.getY() - 1);
+            this.pacman.setY(pacman.getY() - 1);
         } else if (m == Move.TOP && grid[pacman.getX() - 1][pacman.getY() ] != 2) {
-            this.pacman = new Coordinate(pacman.getX() - 1, pacman.getY());
+            this.pacman.setX(pacman.getX() - 1);
         } else if (m == Move.BOTTOM && grid[pacman.getX() + 1][pacman.getY()] != 2) {
-            this.pacman = new Coordinate(pacman.getX() + 1, pacman.getY());
+            this.pacman.setX(pacman.getX() + 1);
         }
     }
 
     public String toString() {
-        String result =  this.currentStatus + "\n";
+        StringBuilder result = new StringBuilder(this.currentStatus + "\n");
         for (int x = 0; x < this.grid.length; x++) {
-            result += "[";
+            result.append("[");
             for (int y = 0; y <this.grid[x].length; y++) {
                 if (this.pacman.equals(new Coordinate(x, y)))
-                    result += "[\u001B[33mO\u001B[0m]";
+                    result.append("[\u001B[33mO\u001B[0m]");
                 else if (grid[x][y] == 4)
-                    result += "[\u001B[37mo\u001B[0m]";
+                    result.append("[\u001B[37mo\u001B[0m]");
                 else if (grid[x][y] == 3)
-                    result += "[\u001B[37m-\u001B[0m]";
+                    result.append("[\u001B[37m-\u001B[0m]");
                 else if (grid[x][y] == 2)
-                    result += "[\u001B[34mO\u001B[0m]";
+                    result.append("[\u001B[34mO\u001B[0m]");
                 else if (grid[x][y] == 1)
-                    result += "[\u001B[31mO\u001B[0m]";
+                    result.append("[\u001B[31mO\u001B[0m]");
                 else
-                    result += "[ ]";
+                    result.append("[ ]");
             }
-            result += "]\n";
+            result.append("]\n");
         }
-        return result;
+        return result.toString();
     }
 
 }
