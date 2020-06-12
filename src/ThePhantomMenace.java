@@ -7,7 +7,7 @@ public class ThePhantomMenace extends PacmanGame implements Runnable {
 
     @Override
     public void run() {
-        playgroundShuffle(0);
+        checkTheShorterPath();
     }
 
     public ArrayList playgroundShuffle(int numberOfPathToSimulate) {
