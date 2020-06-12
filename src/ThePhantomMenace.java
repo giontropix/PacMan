@@ -60,15 +60,10 @@ public class ThePhantomMenace extends PacmanGame implements Runnable {
 
     public ArrayList checkTheShorterPath(){
         ArrayList<ArrayList<Coordinate>> list = playgroundShuffle(0);
-        ArrayList<Integer> listOfSize = new ArrayList<>();
-        int bestPathIndex = 0;
-        for (int i = 0; i < list.size(); i++) {
-            listOfSize.add(list.get(i).size());
-        }
-        Collections.sort(listOfSize);
-        for (int i = 0; i < list.size(); i++) {
-            if(listOfSize.get(0) == list.get(i).size())
-                bestPathIndex = i;
+        int bestPathIndex = list.get(0).size();
+        for (int i = 1; i < list.size(); i++) {
+            if(list.get(i).size()<bestPathIndex)
+                bestPathIndex = list.get(i).size();
         }
         return list.get(bestPathIndex);
     }
