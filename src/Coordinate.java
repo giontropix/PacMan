@@ -1,10 +1,14 @@
+import java.util.ArrayList;
+
 public class Coordinate {
     private int x;
     private int y;
+    private ArrayList<Coordinate> bestPath;
 
     public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
+        bestPath = new ArrayList<>();
     }
 
     public int getX() {
@@ -21,6 +25,14 @@ public class Coordinate {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public ArrayList<Coordinate> getBestPath() {
+        return bestPath;
+    }
+
+    public void setBestPath(ArrayList<Coordinate> bestPath) {
+        this.bestPath = bestPath;
     }
 
     public boolean equals(Object o) {
