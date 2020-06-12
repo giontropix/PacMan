@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class PacmanGame {
@@ -5,6 +6,7 @@ public class PacmanGame {
     enum Status {IN_GAME, LOSE, WIN}
     private Status currentStatus = Status.IN_GAME;
     Coordinate pacman;
+    ArrayList<Coordinate> phantom = new ArrayList<>();
     int[][] grid;
     int point = 0;
     int partialPoint = 0;
@@ -22,9 +24,9 @@ public class PacmanGame {
                 {2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2},
                 {2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2},
                 {2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2},
-                {2, 2, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 2, 2, 2, 2},
-                {2, 2, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 2, 2, 2, 2},
-                {2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2, 2, 2},
+                {2, 2, 2, 2, 2, 0, 2, 0, 2, 9, 9, 9, 2, 0, 2, 0, 2, 2, 2, 2, 2},
+                {2, 2, 2, 2, 2, 0, 2, 0, 2, 0, 0, 0, 2, 0, 2, 0, 2, 2, 2, 2, 2},
+                {2, 2, 2, 2, 2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2, 2, 2, 2, 2},
                 {2, 2, 2, 2, 2, 0, 2, 0, 2, 2, 2, 2, 2, 0, 2, 0, 2, 2, 2, 2, 2},
                 {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2},
                 {2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2, 0, 2, 2, 2, 0, 2, 2, 2, 0, 2},
@@ -36,7 +38,10 @@ public class PacmanGame {
                 {2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2},
                 {2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2}
         };
-        pacman= new Coordinate(1, 1);
+        pacman = new Coordinate(1, 1);
+        phantom.add(new Coordinate(13, 9));
+        phantom.add(new Coordinate(13, 10));
+        phantom.add(new Coordinate(13, 11));
         generateItemToEat();
     }
 
@@ -47,7 +52,7 @@ public class PacmanGame {
         grid[10][19] = 4;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                if(grid[i][j] == 0)
+                if(grid[i][j] == 0 && !this.pacman.equals(new Coordinate(i, j)))
                     grid[i][j] = 3;//little items to eat
             }
         }
@@ -64,26 +69,30 @@ public class PacmanGame {
             else
                 generateCherry();
             }
-
     }
 
     public void eatItemsOrCherry(Coordinate coord){
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                if(grid[i][j] == 3 && coord.getX() == i && coord.getY() == j){
-                    point += 10;
-                    partialPoint += 10;
-                    grid[i][j] = 0;
-                }
-                if(grid[i][j] == 4 && coord.getX() == i && coord.getY() == j) {
-                    point += 100;
-                    partialPoint += 100;
-                    grid[i][j] = 0;
-                }
-                if(grid[i][j] == 1 && coord.getX() == i && coord.getY() == j) {
-                    point += 1000;
-                    partialPoint += 1000;
-                    grid[i][j] = 0;
+                if (coord.getX() == i && coord.getY() == j) {
+                    int valueOfGrid = grid[i][j];
+                    switch (valueOfGrid){
+                        case 1: //fruit
+                            point += 1000;
+                            partialPoint += 1000;
+                            grid[i][j] = 0;
+                        break;
+                        case 3: //little item to eat
+                            point += 10;
+                            partialPoint += 10;
+                            grid[i][j] = 0;
+                        break;
+                        case 4: //big item to eat
+                            point += 100;
+                            partialPoint += 100;
+                            grid[i][j] = 0;
+                        break;
+                    }
                 }
             }
         }
@@ -108,17 +117,17 @@ public class PacmanGame {
     }
 
     public void move(Move m) {
-        eatItemsOrCherry(this.pacman);
         generateCherry();
-        if (m == Move.RIGHT && grid[pacman.getX()][pacman.getY() + 1] != 2) {
+        if (m == Move.RIGHT && grid[pacman.getX()][pacman.getY() + 1] != 2 && grid[pacman.getX()][pacman.getY() + 1] != 9) {
             this.pacman.setY(pacman.getY() + 1);
-        } else if (m == Move.LEFT && grid[pacman.getX()][pacman.getY() - 1] != 2) {
+        } else if (m == Move.LEFT && grid[pacman.getX()][pacman.getY() - 1] != 2 && grid[pacman.getX()][pacman.getY() - 1] != 9) {
             this.pacman.setY(pacman.getY() - 1);
-        } else if (m == Move.TOP && grid[pacman.getX() - 1][pacman.getY() ] != 2) {
+        } else if (m == Move.TOP && grid[pacman.getX() - 1][pacman.getY() ] != 2 && grid[pacman.getX() - 1][pacman.getY() ] != 9) {
             this.pacman.setX(pacman.getX() - 1);
-        } else if (m == Move.BOTTOM && grid[pacman.getX() + 1][pacman.getY()] != 2) {
+        } else if (m == Move.BOTTOM && grid[pacman.getX() + 1][pacman.getY()] != 2 && grid[pacman.getX() + 1][pacman.getY()] != 9) {
             this.pacman.setX(pacman.getX() + 1);
         }
+        eatItemsOrCherry(this.pacman);
     }
 
     public String toString() {
@@ -128,6 +137,10 @@ public class PacmanGame {
             for (int y = 0; y <this.grid[x].length; y++) {
                 if (this.pacman.equals(new Coordinate(x, y)))
                     result.append("[\u001B[33mO\u001B[0m]");
+                else if (this.phantom.contains(new Coordinate(x, y)))
+                    result.append("[\u001B[35mO\u001B[0m]");
+                else if (grid[x][y] == 9)
+                    result.append("[\u001B[36mO\u001B[0m]");
                 else if (grid[x][y] == 4)
                     result.append("[\u001B[37mo\u001B[0m]");
                 else if (grid[x][y] == 3)
@@ -143,5 +156,4 @@ public class PacmanGame {
         }
         return result.toString();
     }
-
 }
