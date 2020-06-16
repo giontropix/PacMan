@@ -9,8 +9,7 @@ public class ThePhantomMenace extends PacmanGame implements Runnable {
 
     }
 
-    public void pathListMaker() //SETTATO A VOID PERCHE' USANDO SETBESTPATH NON ABBIAMO BISOGNO DI RITORNO?
-    {
+    public void pathListMaker() { //SETTATO A VOID PERCHE' USANDO SETBESTPATH NON ABBIAMO BISOGNO DI RITORNO?
         ArrayList<ArrayList<Coordinate>> pathList = new ArrayList<>();
         for(int i = 0; i < super.phantom.size(); i++) {
             for(int j = 0; j < 100; j++){
